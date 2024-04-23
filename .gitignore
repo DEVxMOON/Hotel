@@ -51,4 +51,5 @@ gradlew.bat
 settings.gradle.kts
 
 !src/main/kotlin/
-src/*
+src/main/resources
+src/test
