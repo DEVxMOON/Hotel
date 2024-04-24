@@ -31,7 +31,11 @@ fun main() {
                 println("예약할 방번호를 입력해주세요")
                 while (true) {
                     room = readln().toInt()
-                    if (room < 100 || room > 999) {
+
+                    //예약된 방인지 아닌지 체크하기.
+                    if(guestList.any{it.room == room}) {
+                        println("해당 방은 이미 예약되었습니다. 다른 방을 선택해주세요.")
+                    }else if (room < 100 || room > 999) {
                         println("올바르지 않은 방번호입니다. 방번호는 100~999 영역 이내입니다.")
                     } else {
                         break
@@ -84,6 +88,10 @@ fun main() {
 
             2 -> {
                 //예약목록 출력
+                guestList.forEachIndexed { id, info ->
+                    //체크인, 체크아웃 포멧 설정.
+                    println("${id+1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${info.checkIn}, 체크아웃: ${info.checkOut}")
+                }
             }
 
             3 -> {
