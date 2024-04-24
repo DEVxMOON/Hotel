@@ -88,23 +88,13 @@ fun main() {
 
             2 -> {
                 //예약목록 출력
-                guestList.forEachIndexed { id, info ->
-                    //체크인, 체크아웃 포멧 설정.
-                    val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
-                    val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
-                    println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${checkInDate}, 체크아웃: $checkOutDate")
-                }
+                printGuestList(guestList)
             }
 
             3 -> {
                 //예약목록(정렬) 출력 --> 체크인 날짜 기준 오름차순
-                guestList.sortedBy { LocalDate.parse(it.checkIn, DateTimeFormatter.BASIC_ISO_DATE) }
-                    .forEachIndexed { id, info ->
-                        val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
-                        val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
-                        println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: $checkInDate, 체크아웃: $checkOutDate")
-                    }
-
+                val sortGuestList = guestList.sortBy { LocalDate.parse(it.checkIn, DateTimeFormatter.BASIC_ISO_DATE) }
+                println(sortGuestList)
             }
 
             4 -> {
@@ -136,3 +126,13 @@ data class Info(
     var checkIn: String,
     var checkOut: String
 )
+
+// 호텔 예약자 목록 출력 함수
+fun printGuestList(list: List<Info>) {
+    list.forEachIndexed { id, info ->
+        //체크인, 체크아웃 포멧 설정.
+        val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
+        val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
+        println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${checkInDate}, 체크아웃: $checkOutDate")
+    }
+}
