@@ -1,5 +1,6 @@
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 fun main() {
     var isExit = false
@@ -41,12 +42,18 @@ fun main() {
                 println("체크인 날짜를 입력해주세요 (표기형식: yyyymmdd)")
                 while (true) {
                     checkIn = readln()
-                    checkInDate = LocalDate.parse(checkIn, DateTimeFormatter.BASIC_ISO_DATE)
-                    if (localDate.isBefore(checkInDate)) {
-                        println("체크인은 지난날은 선택할 수 없습니다.")
-                    } else {
-                        break
-
+                    //체크인 날짜 입력범위 초과 관련 handling
+                    try {
+                        checkInDate = LocalDate.parse(checkIn, DateTimeFormatter.BASIC_ISO_DATE)
+                        if (checkInDate.isBefore(localDate)) {
+                            println("체크인은 지난날은 선택할 수 없습니다.")
+                        } else {
+                            break
+                        }
+                    } catch (e: DateTimeParseException) {
+                        println("잘못된 형식입니다. 다시입력해주세요.")
+                    } catch (e: Exception) {
+                        println("오류 발생: ${e.message}. 다시 입력해주세요.")
                     }
                 }
 
@@ -54,13 +61,19 @@ fun main() {
                 println("체크아웃 날짜를 입력해주세요 (표기형식: yyyymmdd)")
                 while (true) {
                     checkOut = readln()
-                    checkOutDate = LocalDate.parse(checkOut, DateTimeFormatter.BASIC_ISO_DATE)
-
-                    if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
-                        println("체크인 날짜보다 이전이거나 같을 수는 없습니다.")
-                    } else {
-                        break
+                    try {
+                        checkOutDate = LocalDate.parse(checkOut, DateTimeFormatter.BASIC_ISO_DATE)
+                        if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
+                            println("체크인 날짜보다 이전이거나 같을 수는 없습니다.")
+                        } else {
+                            break
+                        }
+                    } catch (e: DateTimeParseException) {
+                        println("잘못된 형식입니다. 다시입력해주세요.")
+                    } catch (e: Exception) {
+                        println("오류 발생: ${e.message}. 다시 입력해주세요.")
                     }
+
                 }
 
                 val guest = Info(name, room, checkIn, checkOut)
