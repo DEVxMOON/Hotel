@@ -5,9 +5,9 @@ import java.time.format.DateTimeParseException
 fun main() {
     var isExit = false
     val guestList: MutableList<Info> = mutableListOf()
+    println("호텔 예약 프로그램입니다.")
 
     while (!isExit) {
-        println("호텔 예약 프로그램입니다.")
         println("[메뉴]")
         println("1.방예약 2.예약목록 출력 3.예약목록(정렬) 출력 4.시스템 종료 5.금액 입금-출금내역 목록 출력 6.예약 변경/취소")
 
@@ -33,9 +33,9 @@ fun main() {
                     room = readln().toInt()
 
                     //예약된 방인지 아닌지 체크하기.
-                    if(guestList.any{it.room == room}) {
+                    if (guestList.any { it.room == room }) {
                         println("해당 방은 이미 예약되었습니다. 다른 방을 선택해주세요.")
-                    }else if (room < 100 || room > 999) {
+                    } else if (room < 100 || room > 999) {
                         println("올바르지 않은 방번호입니다. 방번호는 100~999 영역 이내입니다.")
                     } else {
                         break
@@ -90,7 +90,9 @@ fun main() {
                 //예약목록 출력
                 guestList.forEachIndexed { id, info ->
                     //체크인, 체크아웃 포멧 설정.
-                    println("${id+1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${info.checkIn}, 체크아웃: ${info.checkOut}")
+                    val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
+                    val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
+                 println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${checkInDate}, 체크아웃: ${checkOutDate}")
                 }
             }
 
@@ -110,6 +112,10 @@ fun main() {
 
             6 -> {
                 //예약 변경/취소
+            }
+
+            else->{
+                println("잘못된 접근입니다.")
             }
         }
 
