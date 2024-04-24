@@ -31,54 +31,55 @@ fun main() {
                 println("예약할 방번호를 입력해주세요")
                 while (true) {
                     room = readln().toInt()
-
-                    //예약된 방인지 아닌지 체크하기.
-                    if (guestList.any { it.room == room }) {
-                        println("해당 방은 이미 예약되었습니다. 다른 방을 선택해주세요.")
-                    } else if (room < 100 || room > 999) {
+                    if (room < 100 || room > 999) {
                         println("올바르지 않은 방번호입니다. 방번호는 100~999 영역 이내입니다.")
                     } else {
-                        break
-                    }
-                }
+                        // 체크인
+                        println("체크인 날짜를 입력해주세요 (표기형식: yyyymmdd)")
+                        while (true) {
+                            checkIn = readln()
+                            //체크인 날짜 입력범위 초과 관련 handling
+                            try {
+                                checkInDate = LocalDate.parse(checkIn, DateTimeFormatter.BASIC_ISO_DATE)
+                                if (checkInDate.isBefore(localDate)) {
+                                    println("체크인은 지난날은 선택할 수 없습니다.")
+                                } else {
+                                    break
+                                }
+                            } catch (e: DateTimeParseException) {
+                                println("잘못된 형식입니다. 다시입력해주세요.")
+                            } catch (e: Exception) {
+                                println("오류 발생: ${e.message}. 다시 입력해주세요.")
+                            }
+                        }
 
-                // 체크인
-                println("체크인 날짜를 입력해주세요 (표기형식: yyyymmdd)")
-                while (true) {
-                    checkIn = readln()
-                    //체크인 날짜 입력범위 초과 관련 handling
-                    try {
-                        checkInDate = LocalDate.parse(checkIn, DateTimeFormatter.BASIC_ISO_DATE)
-                        if (checkInDate.isBefore(localDate)) {
-                            println("체크인은 지난날은 선택할 수 없습니다.")
+                        // 체크아웃
+                        println("체크아웃 날짜를 입력해주세요 (표기형식: yyyymmdd)")
+                        while (true) {
+                            checkOut = readln()
+                            try {
+                                checkOutDate = LocalDate.parse(checkOut, DateTimeFormatter.BASIC_ISO_DATE)
+                                if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
+                                    println("체크인 날짜보다 이전이거나 같을 수는 없습니다.")
+                                } else {
+                                    break
+                                }
+                            } catch (e: DateTimeParseException) {
+                                println("잘못된 형식입니다. 다시입력해주세요.")
+                            } catch (e: Exception) {
+                                println("오류 발생: ${e.message}. 다시 입력해주세요.")
+                            }
+
+                        }
+                        if (!isRoomAvailable(guestList, room, checkInDate, checkOutDate)) {
+                            println("선택한 기간에 해당 방은 이미 예약되어 있습니다. 다른 방을 선택해주세요.")
+                            continue
                         } else {
                             break
                         }
-                    } catch (e: DateTimeParseException) {
-                        println("잘못된 형식입니다. 다시입력해주세요.")
-                    } catch (e: Exception) {
-                        println("오류 발생: ${e.message}. 다시 입력해주세요.")
                     }
                 }
 
-                // 체크아웃
-                println("체크아웃 날짜를 입력해주세요 (표기형식: yyyymmdd)")
-                while (true) {
-                    checkOut = readln()
-                    try {
-                        checkOutDate = LocalDate.parse(checkOut, DateTimeFormatter.BASIC_ISO_DATE)
-                        if (checkOutDate.isBefore(checkInDate) || checkOutDate.isEqual(checkInDate)) {
-                            println("체크인 날짜보다 이전이거나 같을 수는 없습니다.")
-                        } else {
-                            break
-                        }
-                    } catch (e: DateTimeParseException) {
-                        println("잘못된 형식입니다. 다시입력해주세요.")
-                    } catch (e: Exception) {
-                        println("오류 발생: ${e.message}. 다시 입력해주세요.")
-                    }
-
-                }
 
                 val guest = Info(name, room, checkIn, checkOut)
 
@@ -134,5 +135,17 @@ fun printGuestList(list: List<Info>) {
         val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
         val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
         println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${checkInDate}, 체크아웃: $checkOutDate")
+    }
+}
+
+// 해당 기간 내에 방이 예약 되어있는지 확인하는 함수
+fun isRoomAvailable(list: List<Info>, room: Int, checkInDate: LocalDate, checkOutDate: LocalDate): Boolean {
+    return !list.any {
+        it.room == room && LocalDate.parse(it.checkIn, DateTimeFormatter.BASIC_ISO_DATE).let { bookedCheckIn ->
+            LocalDate.parse(it.checkOut, DateTimeFormatter.BASIC_ISO_DATE).let { bookedCheckOut ->
+                (checkInDate.isBefore(bookedCheckOut) || checkInDate.isEqual(bookedCheckOut)) &&
+                        (checkOutDate.isAfter(bookedCheckIn) || checkOutDate.isEqual(bookedCheckIn))
+            }
+        }
     }
 }
