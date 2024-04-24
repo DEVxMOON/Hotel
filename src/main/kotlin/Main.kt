@@ -92,12 +92,19 @@ fun main() {
                     //체크인, 체크아웃 포멧 설정.
                     val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
                     val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
-                 println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${checkInDate}, 체크아웃: ${checkOutDate}")
+                    println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: ${checkInDate}, 체크아웃: $checkOutDate")
                 }
             }
 
             3 -> {
-                //예약목록(정렬) 출력
+                //예약목록(정렬) 출력 --> 체크인 날짜 기준 오름차순
+                guestList.sortedBy { LocalDate.parse(it.checkIn, DateTimeFormatter.BASIC_ISO_DATE) }
+                    .forEachIndexed { id, info ->
+                        val checkInDate = LocalDate.parse(info.checkIn, DateTimeFormatter.BASIC_ISO_DATE)
+                        val checkOutDate = LocalDate.parse(info.checkOut, DateTimeFormatter.BASIC_ISO_DATE)
+                        println("${id + 1}. 사용자: ${info.name}, 방번호: ${info.room}, 체크인: $checkInDate, 체크아웃: $checkOutDate")
+                    }
+
             }
 
             4 -> {
@@ -114,7 +121,7 @@ fun main() {
                 //예약 변경/취소
             }
 
-            else->{
+            else -> {
                 println("잘못된 접근입니다.")
             }
         }
