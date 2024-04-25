@@ -1,6 +1,7 @@
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import kotlin.random.Random
 
 fun main() {
     var isExit = false
@@ -106,10 +107,27 @@ fun main() {
 
             5 -> {
                 //금액 입금-출금 내열 목록 출력
+                println("조회하실 사용자 이름을 입력하세요.")
+                val searchName: String = readln()
+                val isFound = guestList.find { it.name == searchName }
+
+                if(isFound!= null){
+                    guestList.forEach { info ->
+                        if(info.name == searchName){
+                            println("1. 초기 금액으로 ${info.deposit}원 입금되었습니다.")
+                            println("2. 예약금으로 ${info.withdrawal}원 출금되었습니다.")
+                        }
+                    }
+                }else{
+                    println("예약된 사용자를 찾을 수 없습니다.")
+                }
+
             }
 
             6 -> {
                 //예약 변경/취소
+
+
             }
 
             else -> {
@@ -126,7 +144,10 @@ data class Info(
     var room: Int,
     var checkIn: String,
     var checkOut: String
-)
+){
+    var deposit = Random.nextInt(100000,400000)
+    var withdrawal = Random.nextInt(30000,50000)
+}
 
 // 호텔 예약자 목록 출력 함수
 fun printGuestList(list: List<Info>) {
